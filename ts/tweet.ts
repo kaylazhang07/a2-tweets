@@ -45,16 +45,28 @@ class Tweet {
 
     //returns a boolean, whether the text includes any content written by the person tweeting.
     get written():boolean {
-        //TODO: identify whether the tweet is written
-        return false;
+        return this.writtenText.length > 0;
     }
 
     get writtenText():string {
-        if(!this.written) {
-            return "";
+        
+
+        if (this.source !== 'completed_event'){
+            return '';
+        }
+        const dashIndex = this.text.indexOf(' - ');
+        if (dashIndex === -1){
+            return '';
+        }
+
+        const text = this.text.substring(dashIndex + 3).replace(/https?:\/\/\S+/g, '')
+        .replace(/#Runkeeper/gi, '').trim();
+
+        if (text === 'TomTom MySports Watch'){
+            return '';
         }
         //TODO: parse the written text from the tweet
-        return "";
+        return text;
     }
 
     get activityType():string {

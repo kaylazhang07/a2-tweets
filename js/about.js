@@ -60,6 +60,13 @@ function parseTweets(runkeeper_tweets) {
 
 	document.getElementById('lastDate').innerText = latestDate.toLocaleDateString('en-US', dateFormat); 
 	
+	document.querySelectorAll('.completedEvents').forEach(el => {
+		el.innerText = completed.length;
+	});
+
+	const written = completed.filter(tweet => tweet.written);
+	document.querySelector('.written').innerText = written.length;
+	document.querySelector('.writtenPct').innerText = ((written.length / completed.length) * 100).toFixed(2) + '%';
 	
 }	
 
