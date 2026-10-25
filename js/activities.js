@@ -9,8 +9,31 @@ function parseTweets(runkeeper_tweets) {
 		return new Tweet(tweet.text, tweet.created_at);
 	});
 
-	//TODO: create a new array or manipulate tweet_array to create a graph of the number of tweets containing each type of activity.
+	const completed = tweet_array.filter(t => t.source === 'completed_event' && t.activityType !== 'unknown');
+	const stats = {};
+	completed.forEach(t => {
+		const type = t.activityType; 
+		if (!stats[type]){
+			stats[type] = {count: 0, total: 0, weekdayTotal: 0, weekdayCount: 0, weekendTotal: 0, weekendCount: 0};
+		}
+		const s = stats[type];
+		s.count++;
+		s.total += t.distance;
 
+		const day = t.time.getDay();
+		if (day === 0 || day === 6){
+			s.weekendTotal += t.distance;
+			s.weekdayCount++;
+		}
+	});
+	//TODO: create a new array or manipulate tweet_array to create a graph of the number of tweets containing each type of activity.
+	const sortedTypes = Object.keys(stats).sort((a,b)=> stats[b].count - stats[a].count);
+
+	const topThree = sortedTypes.slice(0,3);
+	$('#numberActivities').text(sortedTypes.length);
+	$('#firstMost').text(topThree[0]);
+	$('#secondMost').text(topThree[1]);
+	$('#thirdMost').text(topThree[2]);
 	activity_vis_spec = {
 	  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
 	  "description": "A graph of the number of Tweets containing each type of activity.",
