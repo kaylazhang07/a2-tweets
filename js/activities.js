@@ -66,7 +66,6 @@ function parseTweets(runkeeper_tweets) {
 		"x":{"field": "activityType", "type": "nominal", "sort": "-y", "title": "Activity type"},
 		"y":{"field": "count", "type": "quantitative", "title": "Number of tweets"}
 	  }
-	  //TODO: Add mark and encoding
 	};
 	vegaEmbed('#activityVis', activity_vis_spec, {actions:false});
 
@@ -77,49 +76,33 @@ function parseTweets(runkeeper_tweets) {
 	  "data": {
 	    "values":  topThreeTweets
 	  },
+	  "params": [{"name": "showMeans", "value": false}],
+	  "transform": [
+		{"timeUnit": "day", "field": "time", "as": "day"},
+		{"joinaggregate": [{"op": "mean", "field": "distance", "as": "meanDistance"}], "groupby": ["day", "activityType"]},
+		{"calculate": "showMeans ? datum.meanDistance : datum.distance", "as": "shownDistance"}
+	],
 	  "mark": "point",
 	  "encoding":{
-		"x":{"field": "time", "timeUnit": "day", "type": "ordinal", "title": "Day of the week"},
-		"y":{"field": "distance", "type": "quantitative", "title": "Distance (mi)"},
+		"x":{"field": "day", "timeUnit": "day", "type": "ordinal", "title": "Day of the week"},
+		"y":{"field": "shownDistance", "type": "quantitative", "title": "Distance (mi)"},
 		"color": {"field": "activityType", "type": "nominal", "title": "Activity type"}
 	  }
 	};
-	vegaEmbed('#distanceVis', distance_vis_spec, {actions:false});
 
-	distance_vis_aggregated_spec = {
-	  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-	  "description": "Mean distances by day of the week for the top three most tweeted about activities",
-	  "data": {
-	    "values":  topThreeTweets
-	  },
-	  "mark": "point",
-	  "encoding":{
-		"x":{"field": "time", "timeUnit": "day", "type": "ordinal", "title": "Day of the week"},
-		"y":{"field": "distance", "aggregate": "mean", "type": "quantitative", "title": "Mean distance (mi)"},
-		"color": {"field": "activityType", "type": "nominal", "title": "Activity type"}
-	  }
-	};
-	vegaEmbed('#distanceVisAggregated', distance_vis_aggregated_spec, {actions:false});
-
-	const distanceVis = document.getElementById('distanceVis');
-	const distanceVisAggregated = document.getElementById('distanceVisAggregated');
 	const aggregateButton = document.getElementById('aggregate');
-
-	distanceVis.style.display = 'block';
-	distanceVisAggregated.style.display = 'none';
-
-	aggregateButton.addEventListener('click', function(){
-		if(distanceVisAggregated.style.display === 'none'){
-			distanceVis.style.display = 'none';
-			distanceVisAggregated.style.display = 'block';
-			aggregateButton.innerText = 'Show all activities';
-		}
-		else{
-			distanceVis.style.display = 'block';
-			distanceVisAggregated.style.display = 'none';
-			aggregateButton.innerText = 'Show means';
-		}
+	document.getElementById('distanceVis').style.display = 'block';
+	
+	vegaEmbed('#distanceVis', distance_vis_spec, {actions:false}).then(function(result) {
+		const view = result.view; 
+		aggregateButton.addEventListener('click', function(){
+			const showingMeans = view.signal('showMeans');
+			view.signal('showMeans', !showingMeans).runAsync();
+			aggregateButton.innerText = showingMeans ? 'Show means' : 'Show all activities';
+		})
 	});
+
+
 }
 
 //Wait for the DOM to load
