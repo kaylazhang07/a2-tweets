@@ -34,6 +34,11 @@ function parseTweets(runkeeper_tweets) {
 	$('#firstMost').text(topThree[0]);
 	$('#secondMost').text(topThree[1]);
 	$('#thirdMost').text(topThree[2]);
+
+	const byAvg = top3.slice().sort((a, b) => (stats[b].total / stats[b].count) - (stats[a].total / stats[a].count));
+	$('#longestActivityType').text(byAvg[0]);
+	$('#shortestActivityType').text(byAvg[byAvg.length -1]);
+	
 	activity_vis_spec = {
 	  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
 	  "description": "A graph of the number of Tweets containing each type of activity.",
