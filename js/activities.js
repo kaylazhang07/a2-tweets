@@ -8,8 +8,10 @@ function parseTweets(runkeeper_tweets) {
 	tweet_array = runkeeper_tweets.map(function(tweet) {
 		return new Tweet(tweet.text, tweet.created_at);
 	});
-
+	
+	// keep completed tweets with distance 
 	const completed = tweet_array.filter(t => t.source === 'completed_event' && t.activityType !== 'unknown');
+	// for each activity type, track count, total distance, and weekday or weekend total 
 	const stats = {};
 	completed.forEach(t => {
 		const type = t.activityType; 
@@ -30,7 +32,8 @@ function parseTweets(runkeeper_tweets) {
 			s.weekdayCount++;
 		}
 	});
-	//TODO: create a new array or manipulate tweet_array to create a graph of the number of tweets containing each type of activity.
+	
+	// sort activity types by most common 
 	const sortedTypes = Object.keys(stats).sort((a,b)=> stats[b].count - stats[a].count);
 
 	const topThree = sortedTypes.slice(0,3);
@@ -38,11 +41,13 @@ function parseTweets(runkeeper_tweets) {
 	document.getElementById('firstMost').innerText = topThree[0];
 	document.getElementById('secondMost').innerText = topThree[1];
 	document.getElementById('thirdMost').innerText = topThree[2];
+	
+	// calculate longest and shortest average of the top three 
 	const byAvg = topThree.slice().sort((a, b) => (stats[b].total / stats[b].count) - (stats[a].total / stats[a].count));
 	document.getElementById('longestActivityType').innerText = byAvg[0];
 	document.getElementById('shortestActivityType').innerText = byAvg[byAvg.length-1];
 
-
+	// average distance on weekends and weekdays across the top 3
 	let weekdayTotal = 0, weekdayCount = 0, weekendTotal = 0, weekendCount = 0;
 	topThree.forEach(type => {
 		weekdayTotal += stats[type].weekdayTotal;
@@ -92,7 +97,8 @@ function parseTweets(runkeeper_tweets) {
 
 	const aggregateButton = document.getElementById('aggregate');
 	document.getElementById('distanceVis').style.display = 'block';
-	
+
+	// button flips showMeans so one chart can produce both points or means
 	vegaEmbed('#distanceVis', distance_vis_spec, {actions:false}).then(function(result) {
 		const view = result.view; 
 		aggregateButton.addEventListener('click', function(){

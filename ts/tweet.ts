@@ -9,7 +9,7 @@ class Tweet {
 
 	//returns either 'live_event', 'achievement', 'completed_event', or 'miscellaneous'
     get source():string {
-        //TODO: identify whether the source is a live event, an achievement, a completed event, or miscellaneous.
+       
         const text = this.text.toLowerCase();
 
         if(
@@ -59,13 +59,14 @@ class Tweet {
             return '';
         }
 
+        // removes links, runkeeper tags, tomtom watch to get user text, which comes after the " - "
         const text = this.text.substring(dashIndex + 3).replace(/https?:\/\/\S+/g, '')
         .replace(/#Runkeeper/gi, '').trim();
 
         if (text === 'TomTom MySports Watch'){
             return '';
         }
-        //TODO: parse the written text from the tweet
+        
         return text;
     }
 
@@ -77,7 +78,7 @@ class Tweet {
         if (!match){
             return "unknown";
         }
-        //TODO: parse the activity type from the text of the tweet
+        
         return match[3].trim().toLowerCase();
     }
 
@@ -85,7 +86,6 @@ class Tweet {
         if(this.source != 'completed_event') {
             return 0;
         }
-        //TODO: prase the distance from the text of the tweet
         const match = this.text.match(/(?:completed|posted) an? (\d+(?:\.\d+)?)\s*(km|mi)/i);
         if (!match){
             return 0;
@@ -95,7 +95,7 @@ class Tweet {
     }
 
     getHTMLTableRow(rowNumber:number):string {
-        //TODO: return a table row which summarizes the tweet with a clickable link to the RunKeeper activity
+        // wrap with <a> tag so link is clickable in the table
         const linkedText = this.text.replace(/https?:\/\/\S+/g, url => `<a href="${url}" target="_blank">${url}</a>`)
         return `<tr><td>${rowNumber}</td><td>${this.activityType}</td><td>${linkedText}</td></tr>`;
     }

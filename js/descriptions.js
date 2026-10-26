@@ -1,3 +1,4 @@
+// user-written tweets
 let writtenTweets = [];
 
 function parseTweets(runkeeper_tweets) {
@@ -7,13 +8,13 @@ function parseTweets(runkeeper_tweets) {
 		return;
 	}
 
-	//TODO: Filter to just the written tweets
+	
 	writtenTweets = runkeeper_tweets.map(tweet => new Tweet(tweet.text, tweet.created_at)).filter(t => t.written);
 
 }
 
 function addEventHandlerForSearch() {
-	//TODO: Search the written tweets as text is entered into the search box, and add them to the table
+	
 	const searchInput = document.getElementById('textFilter');
 	const searchCount = document.getElementById('searchCount');
 	const searchText = document.getElementById('searchText');
@@ -22,16 +23,19 @@ function addEventHandlerForSearch() {
 	searchCount.innerText = 0;
 	searchText.innerText = '';
 
+	// reruns search after a character is typed or deleted
 	searchInput.addEventListener('input', function() {
 		const query = searchInput.value;
 		searchText.innerText = query;
 
+		// if search is empty, clear the table and reset count
 		if (query === '') {
 			searchCount.innerText = 0;
 			table.innerHTML = '';
 			return;
 
 		}
+		// use toLowerCase for case-insensitive matches
 		const matches = writtenTweets.filter(t => t.writtenText.toLowerCase().includes(query.toLowerCase()));
 		searchCount.innerText = matches.length;
 

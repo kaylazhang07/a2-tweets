@@ -13,11 +13,15 @@ function parseTweets(runkeeper_tweets) {
 	//It works correctly, your task is to update the text of the other tags in the HTML file!
 	document.getElementById('numberTweets').innerText = tweet_array.length;	
 	const total = tweet_array.length;
+	
+	// split tweets into the four categories
 	const completed = tweet_array.filter(tweet => tweet.source === 'completed_event');
 	const live = tweet_array.filter(tweet => tweet.source === 'live_event');
 	const achievements = tweet_array.filter(tweet => tweet.source === 'achievement');
 	const miscellaneous = tweet_array.filter(tweet => tweet.source === 'miscellaneous');
 
+
+	// format count into a percentage rounded to two decimal places
 	function formatPercentage(count){
 		return ((count / total) * 100).toFixed(2) + '%';
 	}
@@ -36,6 +40,7 @@ function parseTweets(runkeeper_tweets) {
 	document.querySelector('.miscellaneous').innerText = miscellaneous.length;
 	document.querySelector('.miscellaneousPct').innerText = formatPercentage(miscellaneous.length);
 	
+
 	const dates = tweet_array.map(function(tweet){
 		return tweet.time.getTime();
 	});
@@ -48,7 +53,7 @@ function parseTweets(runkeeper_tweets) {
 	const earliestDate = new Date(earliestTime);
 	const latestDate = new Date(latestTime);
 
-
+	// format dates in day, month date, year order ("Sunday, October 25, 2026")
 	const dateFormat = {
 		weekday: 'long',
 		month: 'long',
@@ -60,6 +65,7 @@ function parseTweets(runkeeper_tweets) {
 
 	document.getElementById('lastDate').innerText = latestDate.toLocaleDateString('en-US', dateFormat); 
 	
+	// fill in completedEvents span
 	document.querySelectorAll('.completedEvents').forEach(el => {
 		el.innerText = completed.length;
 	});
