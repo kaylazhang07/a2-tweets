@@ -77,14 +77,29 @@ function parseTweets(runkeeper_tweets) {
 	  "data": {
 	    "values":  topThreeTweets
 	  },
-	  "mark": "bar",
+	  "mark": "point",
 	  "encoding":{
 		"x":{"field": "time", "timeUnit": "day", "type": "ordinal", "title": "Day of the week"},
 		"y":{"field": "distance", "type": "quantitative", "title": "Distance (mi)"},
 		"color": {"field": "activityType", "type": "nominal", "title": "Activity type"}
 	  }
 	};
-	vegaEmbed('#activityVis', distance_vis_spec, {actions:false});
+	vegaEmbed('#distanceVis', distance_vis_spec, {actions:false});
+
+	distance_vis_aggregated_spec = {
+	  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+	  "description": "Mean distances by day of the week for the top three most tweeted about activities",
+	  "data": {
+	    "values":  topThreeTweets
+	  },
+	  "mark": "point",
+	  "encoding":{
+		"x":{"field": "time", "timeUnit": "day", "type": "ordinal", "title": "Day of the week"},
+		"y":{"field": "distance", "aggregate": "mean", "type": "quantitative", "title": "Mean distance (mi)"},
+		"color": {"field": "activityType", "type": "nominal", "title": "Activity type"}
+	  }
+	};
+	vegaEmbed('#distanceVisAggregated', distance_vis_aggregated_spec, {actions:false});
 
 	//TODO: create the visualizations which group the three most-tweeted activities by the day of the week.
 	//Use those visualizations to answer the questions about which activities tended to be longest and when.
