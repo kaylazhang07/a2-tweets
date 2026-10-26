@@ -23,6 +23,10 @@ function parseTweets(runkeeper_tweets) {
 		const day = t.time.getDay();
 		if (day === 0 || day === 6){
 			s.weekendTotal += t.distance;
+			s.weekendCount++;
+		}
+		else{
+			s.weekdayTotal += t.distance;
 			s.weekdayCount++;
 		}
 	});
@@ -30,15 +34,26 @@ function parseTweets(runkeeper_tweets) {
 	const sortedTypes = Object.keys(stats).sort((a,b)=> stats[b].count - stats[a].count);
 
 	const topThree = sortedTypes.slice(0,3);
-	$('#numberActivities').text(sortedTypes.length);
-	$('#firstMost').text(topThree[0]);
-	$('#secondMost').text(topThree[1]);
-	$('#thirdMost').text(topThree[2]);
+	document.getElementById('numberActivities').innerText = sortedTypes.length;
+	document.getElementById('firstMost').innerText = topThree[0];
+	document.getElementById('secondMost').innerText = topThree[1];
+	document.getElementById('thirdMost').innerText = topThree[2];
+	const byAvg = topThree.slice().sort((a, b) => (stats[b].total / stats[b].count) - (stats[a].total / stats[a].count));
+	document.getElementById('longestActivityType').innerText = byAvg[0];
+	document.getElementById('shortestActivityType').innerText = byAvg[byAvg.length-1];
 
-	const byAvg = top3.slice().sort((a, b) => (stats[b].total / stats[b].count) - (stats[a].total / stats[a].count));
-	$('#longestActivityType').text(byAvg[0]);
-	$('#shortestActivityType').text(byAvg[byAvg.length -1]);
-	
+
+	let weekdayTotal = 0, weekdayCount = 0, weekendTotal = 0, weekendCount = 0;
+	topThree.forEach(type => {
+		weekdayTotal += stats[type].weekdayTotal;
+		weekdayCount += stats[type].weekdayCount;
+		weekendTotal += stats[type].weekendTotal;
+		weekendCount += stats[type].weekendCount;
+
+	});
+	const weekdayAvg = weekdayTotal / weekdayCount;
+	const weekendAvg = weekendTotal / weekendCount; 
+	document.getElementById('weekdayOrWeekendLonger').innerText = weekendAvg > weekdayAvg ? 'weekends' : 'weekdays';
 	activity_vis_spec = {
 	  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
 	  "description": "A graph of the number of Tweets containing each type of activity.",
