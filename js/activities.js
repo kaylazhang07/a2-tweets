@@ -70,7 +70,7 @@ function parseTweets(runkeeper_tweets) {
 	};
 	vegaEmbed('#activityVis', activity_vis_spec, {actions:false});
 
-	const topThreeTweets = completed.filter(t=> topThree.includes(t.activityType)).map(type => ({time: t.time.toISOString(), distance: t.distance, activityType: t.activityType}));
+	const topThreeTweets = completed.filter(t => topThree.includes(t.activityType)).map(t => ({time: t.time.toISOString(), distance: t.distance, activityType: t.activityType}));
 	distance_vis_spec = {
 	  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
 	  "description": "Distances by day of the week for the top three most tweeted-about activities.",
@@ -101,8 +101,25 @@ function parseTweets(runkeeper_tweets) {
 	};
 	vegaEmbed('#distanceVisAggregated', distance_vis_aggregated_spec, {actions:false});
 
-	//TODO: create the visualizations which group the three most-tweeted activities by the day of the week.
-	//Use those visualizations to answer the questions about which activities tended to be longest and when.
+	const distanceVis = document.getElementById('distanceVis');
+	const distanceVisAggregated = document.getElementById('distanceVisAggregated');
+	const aggregateButton = document.getElementById('aggregate');
+
+	distanceVisAggregated.style.display = 'none';
+
+	aggregateButton.addEventListener('click', function(){
+		if(distanceVisAggregated.style.display === 'none'){
+			distanceVis.style.display = 'none';
+			distanceVisAggregated.style.display = 'block';
+			aggregateButton.innerText = 'Show all activities';
+		}
+		else{
+			distanceVis.style.display = 'block';
+			distanceVisAggregated.style.display = 'none';
+			aggregateButton.innerText = 'Show means';
+		}
+	});
+
 }
 
 //Wait for the DOM to load
