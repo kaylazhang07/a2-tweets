@@ -8,7 +8,7 @@ function parseTweets(runkeeper_tweets) {
 	}
 
 	//TODO: Filter to just the written tweets
-	writtenTweets = runkeeper_tweets.map(tweet => newTweet(tweet.text, tweet.created_at)).filter(t => t.written);
+	writtenTweets = runkeeper_tweets.map(tweet => new Tweet(tweet.text, tweet.created_at)).filter(t => t.written);
 
 }
 
@@ -18,6 +18,9 @@ function addEventHandlerForSearch() {
 	const searchCount = document.getElementById('searchCount');
 	const searchText = document.getElementById('searchText');
 	const table = document.getElementById('tweetTable');
+
+	searchCount.innerText = 0;
+	searchText.innerText = '';
 
 	searchInput.addEventListener('input', function() {
 		const query = searchInput.value;

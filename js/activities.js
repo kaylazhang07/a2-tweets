@@ -105,6 +105,7 @@ function parseTweets(runkeeper_tweets) {
 	const distanceVisAggregated = document.getElementById('distanceVisAggregated');
 	const aggregateButton = document.getElementById('aggregate');
 
+	distanceVis.style.display = 'block';
 	distanceVisAggregated.style.display = 'none';
 
 	aggregateButton.addEventListener('click', function(){
@@ -119,7 +120,6 @@ function parseTweets(runkeeper_tweets) {
 			aggregateButton.innerText = 'Show means';
 		}
 	});
-
 }
 
 //Wait for the DOM to load
